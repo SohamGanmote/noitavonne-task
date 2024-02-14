@@ -1,0 +1,11 @@
+Front-end: React with Vite, styled with Tailwind CSS, state managed with Redux.
+
+Back-end: Dummy backend created for data handling.
+
+To start front-end: cd .\client\ -> npm run dev
+
+To start back-end: cd .\server\ -> node server.js
+
+
+
+
