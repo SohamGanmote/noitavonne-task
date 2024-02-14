@@ -12,10 +12,18 @@ const Home = () => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [suggestions, setSuggestions] = useState([]);
+	const [selectedFilterOption, setSelectedFilterOption] = useState("all");
+	const [filterCompanies, setFilterCompanies] = useState([]);
+
+	console.log(selectedFilterOption);
 
 	useEffect(() => {
 		setLoading(true);
-		fetch("http://localhost:8080")
+		let url = "http://localhost:8080";
+		if (selectedFilterOption !== "all") {
+			url = `http://localhost:8080/filterBy/${selectedFilterOption}`;
+		}
+		fetch(url)
 			.then((response) => {
 				if (!response.ok) {
 					throw new Error("Failed to fetch products");
@@ -29,6 +37,22 @@ const Home = () => {
 			.catch((error) => {
 				console.error("Error fetching products:", error);
 				setLoading(false);
+			});
+	}, [selectedFilterOption]);
+
+	useEffect(() => {
+		fetch("http://localhost:8080/getCompanyData")
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error("Failed to fetch products");
+				}
+				return response.json();
+			})
+			.then((data) => {
+				setFilterCompanies(data);
+			})
+			.catch((error) => {
+				console.error("Error fetching products:", error);
 			});
 	}, []);
 
@@ -102,10 +126,32 @@ const Home = () => {
 		setSuggestions([]);
 	};
 
+	const handleCompanyChange = (event) => {
+		setSelectedFilterOption(event.target.value);
+	};
+
 	return (
 		<div className="container mx-auto px-4 py-8">
 			<div className="flex items-center justify-between mb-8">
-				<h1 className="text-3xl font-bold">Products</h1>
+				<div className="flex items-center gap-8">
+					<h1 className="text-3xl font-bold">Products</h1>
+					<div className="flex items-center gap-3">
+						<label htmlFor="company">Filter by company:</label>
+						<select
+							name="company"
+							id="company"
+							value={selectedFilterOption}
+							onChange={handleCompanyChange}
+						>
+							<option value="all">all</option>
+							{filterCompanies.map((item) => (
+								<option key={item} value={item}>
+									{item}
+								</option>
+							))}
+						</select>
+					</div>
+				</div>
 				<div
 					className="relative cursor-pointer"
 					onClick={() => navigate("/checkout")}

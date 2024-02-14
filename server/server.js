@@ -15,6 +15,18 @@ app.get("/", (req, res) => {
   res.send(products);
 });
 
+//filter route
+app.get("/filterBy/:companyName", (req, res) => {
+  const companyName = req.params.companyName;
+  const filteredProducts = products.filter(product => product.companyName === companyName);
+  res.send(filteredProducts);
+});
+
+app.get("/getCompanyData", (req, res) => {
+  const companyNames = [...new Set(products.map(product => product.companyName))];
+  res.send(companyNames);
+});
+
 //get product by id
 app.get("/products/:id", (req, res) => {
   const productId = req.params.id;
